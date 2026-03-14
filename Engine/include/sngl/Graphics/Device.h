@@ -27,8 +27,6 @@ namespace sngl::graphics
 
 		virtual ~Device() = default;
 		virtual void init() = 0;
-
-		static deviceptr_t Create(RenderApi api);
 	};
 }
 

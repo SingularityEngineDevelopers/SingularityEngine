@@ -12,12 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sngl/Graphics/Device.h>
-#include "Vulkan/VulkanDevice.h"
+#ifndef __SNGL_GRAPHICS_INSTANCE_H_INCLUDED__
+#define __SNGL_GRAPHICS_INSTANCE_H_INCLUDED__
 
-using namespace sngl::graphics;
+#include "Types.h"
+#include <memory>
 
-Device::deviceptr_t Device::Create(RenderApi api)
+namespace sngl::graphics
 {
-	return std::make_unique<VulkanDevice>();
+	class Instance
+	{
+	public:
+		virtual ~Instance() = default;
+		
+		virtual void init() = 0;
+
+		static std::unique_ptr<Instance> Create(RenderApi api);
+	};
 }
+
+#endif

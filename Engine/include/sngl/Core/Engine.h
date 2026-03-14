@@ -16,7 +16,7 @@
 #define __SNGL_CORE_ENGINE_H_INCLUDED__
 
 #include <sngl/Platform/SDLWindow.h>
-#include <sngl/Graphics/Device.h>
+#include <sngl/Graphics/Instance.h>
 #include <memory>
 
 namespace sngl
@@ -25,10 +25,11 @@ namespace sngl
 	{
 	public:
 		using window_t = sngl::platform::SDLWindow;
-		using device_t = sngl::graphics::Device;
+		using renderer_t = sngl::graphics::Instance;
+
 	private:
 		std::unique_ptr<window_t> m_window;
-		std::unique_ptr<device_t> m_device;
+		std::unique_ptr<renderer_t> m_renderer;
 
 		bool m_isRunning = false;
 

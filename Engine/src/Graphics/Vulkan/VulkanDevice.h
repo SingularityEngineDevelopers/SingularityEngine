@@ -14,10 +14,17 @@
 
 #include <sngl/Graphics/Device.h>
 
+#define VK_NO_PROTOTYPES
+#include <vulkan/vulkan.h>
+
 namespace sngl::graphics
 {
 	class VulkanDevice : public Device
 	{
+	private:
+		VkInstance m_instance;
+		VkDebugUtilsMessengerEXT m_debugMessenger;
+
 	public:
 		VulkanDevice();
 		~VulkanDevice() override;

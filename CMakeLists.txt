@@ -35,17 +35,22 @@ FetchContent_Declare(
 	GIT_TAG 683181b47cfabd293e3ea409f838915b8297a4fd
 )
 
-set(SDL_TESTS OFF CACHE BOOL "" FORCE)
-set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(SDL3)
-
 FetchContent_Declare(
 	volk
 	GIT_REPOSITORY https://github.com/zeux/volk.git
 	GIT_TAG 0b17a763ba5643e32da1b2152f8140461b3b7345
 )
 
-FetchContent_MakeAvailable(volk)
+FetchContent_Declare(
+	Vulkan_Headers
+	GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
+	GIT_TAG 29184b98984f6169a5e83e97557a77cff1e5b0ca
+)
+
+set(SDL_TESTS OFF CACHE BOOL "" FORCE)
+set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(SDL3 volk Vulkan_Headers)
 
 add_subdirectory(Engine)
 add_subdirectory(Sandbox)

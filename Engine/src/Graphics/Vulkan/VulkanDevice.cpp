@@ -13,10 +13,18 @@
 // limitations under the License.
 
 #include "VulkanDevice.h"
+#include <volk.h>
+#include <SDL3/SDL_vulkan.h>
+
+#include <stdexcept>
+#include <vector>
+#include <iostream>
 
 using namespace sngl::graphics;
 
 VulkanDevice::VulkanDevice()
+	: m_instance(nullptr),
+	m_debugMessenger(nullptr)
 { }
 
 VulkanDevice::~VulkanDevice()

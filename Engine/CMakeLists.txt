@@ -24,8 +24,11 @@ set(SNGL_CORE_SOURCES
 
 set(SNGL_GRAPHICS_SOURCES 
 	"include/sngl/Graphics/Types.h"
+	"include/sngl/Graphics/Instance.h"
 	"include/sngl/Graphics/Device.h"
-	"src/Graphics/Device.cpp"
+	"src/Graphics/Instance.cpp"
+	"src/Graphics/Vulkan/VulkanInstance.h"
+	"src/Graphics/Vulkan/VulkanInstance.cpp"
 	"src/Graphics/Vulkan/VulkanDevice.h"
 	"src/Graphics/Vulkan/VulkanDevice.cpp"
 )
@@ -49,8 +52,9 @@ target_compile_definitions(
 )
 
 if (SNGL_USE_VULKAN)
-	target_compile_definitions(
-		SingularityEngine
-		PRIVATE SNGL_USE_VULKAN
-	)
+	if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+		find_package(Vulkan REQUIRED)
+	else()
+		target_link_libraries(SingularityEngine PRIVATE Vulkan-Headers)
+	endif()
 endif()
