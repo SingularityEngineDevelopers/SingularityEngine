@@ -22,6 +22,8 @@ set(SNGL_PLATFORM_SOURCES
 set(SNGL_CORE_SOURCES 
 	"include/sngl/Core/Engine.h"
 	"src/Core/Engine.cpp"
+	"src/Core/LinearArenaAllocator.h"
+	"src/Core/LinearArenaAllocator.cpp"
 )
 
 set(SNGL_GRAPHICS_SOURCES 
