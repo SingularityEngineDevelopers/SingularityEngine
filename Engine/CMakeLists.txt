@@ -15,6 +15,8 @@
 set(SNGL_PLATFORM_SOURCES
 	"include/sngl/Platform/SDLWindow.h"
 	"src/Platform/SDLWindow.cpp"
+	"src/Platform/OS.h"
+	"src/Platform/OS_win32.cpp"
 )
 
 set(SNGL_CORE_SOURCES 

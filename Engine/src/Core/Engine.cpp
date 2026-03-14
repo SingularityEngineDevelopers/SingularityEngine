@@ -14,6 +14,9 @@
 
 #include <sngl/Core/Engine.h>
 #include <sngl/Graphics/Device.h>
+#include <Platform/OS.h>
+
+#include <stdexcept>
 
 using namespace sngl;
 
@@ -30,6 +33,7 @@ Engine::~Engine()
 
 void Engine::init()
 {
+	sngl::platform::Initialize();
 	m_window->init("Singularity Engine");
 	m_renderer->init();
 	m_isRunning = true;
@@ -51,7 +55,8 @@ void Engine::run()
 
 void Engine::shutdown()
 {
-
+	m_renderer.reset();
+	m_window.reset();
 }
 
 void Engine::processEvents()
