@@ -12,10 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(SNGL_PLATFORM_SOURCES "src/Platform/SDLWindow.cpp")
-set(SNGL_CORE_SOURCES "src/Core/Engine.cpp")
+set(SNGL_PLATFORM_SOURCES
+	"include/sngl/Platform/SDLWindow.h"
+	"src/Platform/SDLWindow.cpp"
+)
 
-add_library(SingularityEngine STATIC ${SNGL_PLATFORM_SOURCES} ${SNGL_CORE_SOURCES})
+set(SNGL_CORE_SOURCES 
+	"include/sngl/Core/Engine.h"
+	"src/Core/Engine.cpp"
+)
+
+set(SNGL_GRAPHICS_SOURCES 
+	"include/sngl/Graphics/Types.h"
+	"include/sngl/Graphics/Device.h"
+	"src/Graphics/Device.cpp"
+	"src/Graphics/Vulkan/VulkanDevice.h"
+	"src/Graphics/Vulkan/VulkanDevice.cpp"
+)
+
+add_library(SingularityEngine STATIC ${SNGL_PLATFORM_SOURCES} ${SNGL_CORE_SOURCES} ${SNGL_GRAPHICS_SOURCES})
 target_link_libraries(
 	SingularityEngine
 	PRIVATE SDL3::SDL3 volk::volk

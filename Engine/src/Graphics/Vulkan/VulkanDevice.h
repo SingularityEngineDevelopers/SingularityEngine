@@ -12,42 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef __SNGL_CORE_ENGINE_H_INCLUDED__
-#define __SNGL_CORE_ENGINE_H_INCLUDED__
-
-#include <sngl/Platform/SDLWindow.h>
 #include <sngl/Graphics/Device.h>
-#include <memory>
 
-namespace sngl
+namespace sngl::graphics
 {
-	class Engine
+	class VulkanDevice : public Device
 	{
 	public:
-		using window_t = sngl::platform::SDLWindow;
-		using device_t = sngl::graphics::Device;
-	private:
-		std::unique_ptr<window_t> m_window;
-		std::unique_ptr<device_t> m_device;
+		VulkanDevice();
+		~VulkanDevice() override;
 
-		bool m_isRunning = false;
-
-	public:
-		Engine();
-		~Engine();
-
-		Engine(const Engine&) = delete;
-		Engine& operator=(const Engine&) = delete;
-
-		void init();
-		void run();
-		void shutdown();
-
-	private:
-		void processEvents();
-		void update(float deltaTime);
-		void render();
+		void init() override;
 	};
 }
-
-#endif

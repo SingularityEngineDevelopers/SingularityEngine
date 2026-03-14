@@ -13,12 +13,14 @@
 // limitations under the License.
 
 #include <sngl/Core/Engine.h>
+#include <sngl/Graphics/Device.h>
 
 using namespace sngl;
 
 Engine::Engine()
 {
 	m_window = std::make_unique<window_t>();
+	m_device = device_t::Create(sngl::graphics::RenderApi::Vulkan);
 }
 
 Engine::~Engine()
@@ -29,6 +31,7 @@ Engine::~Engine()
 void Engine::init()
 {
 	m_window->init("Singularity Engine");
+	m_device->init();
 	m_isRunning = true;
 }
 
