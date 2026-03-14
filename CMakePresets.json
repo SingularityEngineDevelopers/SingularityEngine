@@ -1,0 +1,47 @@
+{
+  "version": 9,
+  "cmakeMinimumRequired": {
+    "major": 4,
+    "minor": 2
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}"
+    },
+    {
+      "name": "vulkan-debug",
+      "displayName": "Vulkan Backend (Debug)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "SNGL_USE_VULKAN": true,
+        "SNGL_USE_DX12": false
+      }
+    },
+    {
+      "name": "vulkan-release",
+      "displayName": "Vulkan Backend (Release)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "SNGL_USE_VULKAN": true,
+        "SNGL_USE_DX12": false
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-vulkan-debug",
+      "displayName": "(Build) Vulkan Backend (Debug)",
+      "configurePreset": "vulkan-debug"
+    },
+    {
+      "name": "build-vulkan-release",
+      "displayName": "(Build) Vulkan Backend (Release)",
+      "configurePreset": "vulkan-release"
+    }
+  ]
+}

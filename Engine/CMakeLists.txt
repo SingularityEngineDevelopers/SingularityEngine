@@ -1,0 +1,41 @@
+# Copyright 2026 Tesseract Interactive
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set(SNGL_PLATFORM_SOURCES "src/Platform/SDLWindow.cpp")
+set(SNGL_CORE_SOURCES "src/Core/Engine.cpp")
+
+add_library(SingularityEngine STATIC ${SNGL_PLATFORM_SOURCES} ${SNGL_CORE_SOURCES})
+target_link_libraries(
+	SingularityEngine
+	PRIVATE SDL3::SDL3 volk::volk
+)
+
+target_include_directories(
+	SingularityEngine
+	PUBLIC include
+	PRIVATE src
+)
+
+# unifying debug mode macro
+target_compile_definitions(
+	SingularityEngine 
+	PRIVATE $<$<CONFIG:Debug>:SNGL_DEBUG>
+)
+
+if (SNGL_USE_VULKAN)
+	target_compile_definitions(
+		SingularityEngine
+		PRIVATE SNGL_USE_VULKAN
+	)
+endif()

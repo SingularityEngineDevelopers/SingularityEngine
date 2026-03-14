@@ -1,0 +1,7 @@
+# IDE/text editor Directories
+.vs
+.vscode
+
+# Common configure directories
+out
+build
