@@ -43,6 +43,10 @@ cmake --build --preset build-vulkan-release .
 - [ ] 3D Rendering
 - [ ] Editor interface (long term goal)
 
+> [!IMPORTANT]
+> Current roadmap contains only several entries now. More of them are going to be added
+> in the future as more ideas would come.
+
 # 🤝 Contributions
 I'm aiming to make this engine one of the fastest indie game engines available. If you'd like to help 
 in development or bug fixes, feel free to open a pull request!
