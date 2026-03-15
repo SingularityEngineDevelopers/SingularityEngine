@@ -1,4 +1,4 @@
-// Copyright 2026 Tesseract Interactive
+// Copyright 2026 Singularity Engine
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
