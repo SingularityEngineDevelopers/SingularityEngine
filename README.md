@@ -39,9 +39,9 @@ cmake --build --preset build-vulkan-release .
 ```
 
 # 🗺 Current Status & Roadmap
-- [] Custom memory allocators (in progress)
-- [] 3D Rendering
-- [] Editor interface (long term goal)
+- [ ] Custom memory allocators (in progress)
+- [ ] 3D Rendering
+- [ ] Editor interface (long term goal)
 
 # 🤝 Contributions
 I'm aiming to make this engine one of the fastest indie game engines available. If you'd like to help 
