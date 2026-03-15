@@ -24,6 +24,8 @@ set(SNGL_CORE_SOURCES
 	"src/Core/Engine.cpp"
 	"src/Core/LinearArenaAllocator.h"
 	"src/Core/LinearArenaAllocator.cpp"
+	"src/Core/POTSlabAllocator.h"
+	"src/Core/POTSlabAllocator.cpp"
 )
 
 set(SNGL_GRAPHICS_SOURCES 
