@@ -63,12 +63,6 @@ size_t sngl::platform::GetAllocationGranularity()
 void* sngl::platform::memory::Reserve(size_t size)
 {
 	assert(g_initialized && "Platform uninitialized");
-	// for safety purposes, in debug mode reserve 1 extra page
-	// with PAGE_NOACCESS to prevent buffer overflows
-	#ifdef SNGL_DEBUG
-	size += g_pageSize;
-	#endif
-
 	return VirtualAlloc(nullptr, size, MEM_RESERVE, PAGE_NOACCESS);
 }
 
