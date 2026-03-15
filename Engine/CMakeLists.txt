@@ -22,10 +22,10 @@ set(SNGL_PLATFORM_SOURCES
 set(SNGL_CORE_SOURCES 
 	"include/sngl/Core/Engine.h"
 	"src/Core/Engine.cpp"
+	"src/Core/Math.h"
 	"src/Core/LinearArenaAllocator.h"
 	"src/Core/LinearArenaAllocator.cpp"
 	"src/Core/POTSlabAllocator.h"
-	"src/Core/POTSlabAllocator.cpp"
 )
 
 set(SNGL_GRAPHICS_SOURCES 
