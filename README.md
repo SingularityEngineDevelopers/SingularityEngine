@@ -52,4 +52,9 @@ in development or bug fixes, feel free to open a pull request!
 4. Open a Pull Request
 
 # ⚖️ License
-This project is licensed under Apache License, version 2.0. See the [License.md](/LICENSE.md) file for details.
+This project is licensed under Apache License, version 2.0. See the [LICENSE.md](/LICENSE.md) file for details.
+
+# 📜 Credits
+## Open-Source projects
+- [SDL3](https://github.com/libsdl-org/SDL): Used for window management and input handling
+- [volk](https://github.com/zeux/volk): meta loader for Vulkan to ease development
