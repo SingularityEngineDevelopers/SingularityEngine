@@ -42,6 +42,7 @@ cmake --build --preset build-vulkan-release .
 - [ ] Custom memory allocators (in progress)
 - [ ] Linux abstractions
 - [ ] 3D Rendering
+- [ ] Actually working engine
 - [ ] Editor interface (long term goal)
 - [ ] MacOS support (long term goal)
 
