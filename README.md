@@ -40,12 +40,10 @@ cmake --build --preset build-vulkan-release .
 
 # 🗺 Current Status & Roadmap
 - [ ] Custom memory allocators (in progress)
+- [ ] Linux abstractions
 - [ ] 3D Rendering
 - [ ] Editor interface (long term goal)
-
-> [!IMPORTANT]
-> Current roadmap contains only several entries now. More of them are going to be added
-> in the future as more ideas would come.
+- [ ] MacOS support (long term goal)
 
 # 🤝 Contributions
 I'm aiming to make this engine one of the fastest indie game engines available. If you'd like to help 
