@@ -56,7 +56,7 @@ namespace sngl::core
 
 		static constexpr int getBlockIxFromSize(size_t blockSize)
 		{
-			int result = math::ceil_log2(blockSize) - 4;
+			int result = math::ceil_log2(blockSize) - 5;
 			if (result > MAX_BLOCK_COUNT)
 				return -1;
 			
@@ -66,7 +66,7 @@ namespace sngl::core
 		static_assert(math::isPOT(reservationSize), "Reservation size must be a power of 2");
 		static constexpr size_t MIN_CELL_SIZE = 16ull;
 		static constexpr size_t MAX_BLOCK_COUNT = 16ull;
-		static constexpr size_t MAX_EFFECTIVE_ALLOCATION = getBlockSize(MAX_BLOCK_COUNT);
+		static constexpr size_t MAX_EFFECTIVE_ALLOCATION = getBlockSize(MAX_BLOCK_COUNT - 1);
 
 		FixedSizeBlock m_blocks[MAX_BLOCK_COUNT];
 
@@ -83,6 +83,11 @@ namespace sngl::core
 		};
 
 	public:
+		~POTSlabAllocator()
+		{
+			sngl::platform::memory::Release(m_reservedMemory);
+		}
+
 		void init()
 		{
 			assert(!m_initialized); // You can't initialize an allocator twice
@@ -113,17 +118,17 @@ namespace sngl::core
 				{
 					uint8_t* currentMem = static_cast<uint8_t*>(m_reservedMemory) + m_currentOffset;
 
-					// TODO: handle blocks that are bigger than page size
-					// some math may be required for optimization
-					if (block.getSize() > m_pageSize)
-						throw std::runtime_error("Not Implemented");
+					const size_t blockSize = block.getSize();
+					size_t commitSize = m_pageSize;
+					if (blockSize > m_pageSize)
+						commitSize = 4 * blockSize;
 
-					if (!sngl::platform::memory::Commit(currentMem, m_pageSize))
+					if (!sngl::platform::memory::Commit(currentMem, commitSize))
 						throw std::runtime_error("POTSlabAllocator: Failed to commit new memory");
 
-					block.supplyNewMemory(currentMem, m_pageSize);
+					block.supplyNewMemory(currentMem, commitSize);
 					memPtr = block.pop();
-					m_currentOffset += m_pageSize;
+					m_currentOffset += commitSize;
 				}
 			}
 			else
@@ -159,6 +164,8 @@ namespace sngl::core
 			else
 				m_blocks->push(allocHeader);
 		}
+
+		static constexpr size_t getMaxEffectiveAllocSize() { return MAX_EFFECTIVE_ALLOCATION; }
 	};
 }
 
