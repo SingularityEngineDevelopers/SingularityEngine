@@ -38,6 +38,8 @@ set(SNGL_GRAPHICS_SOURCES
 	"src/Graphics/Vulkan/VulkanInstance.cpp"
 	"src/Graphics/Vulkan/VulkanDevice.h"
 	"src/Graphics/Vulkan/VulkanDevice.cpp"
+	"src/Graphics/Vulkan/VulkanGlobals.h"
+	"src/Graphics/Vulkan/VulkanGlobals.cpp"
 )
 
 add_library(SingularityEngine STATIC ${SNGL_PLATFORM_SOURCES} ${SNGL_CORE_SOURCES} ${SNGL_GRAPHICS_SOURCES})
