@@ -15,7 +15,6 @@
 #include <sngl/Core/Engine.h>
 #include <sngl/Graphics/Device.h>
 #include <Platform/OS.h>
-#include <Core/POTSlabAllocator.h>
 
 #include <stdexcept>
 
@@ -38,8 +37,6 @@ void Engine::init()
 	m_window->init("Singularity Engine");
 	m_renderer->init();
 	m_isRunning = true;
-
-	core::POTSlabAllocator<512 * 1024> slab;
 }
 
 void Engine::run()

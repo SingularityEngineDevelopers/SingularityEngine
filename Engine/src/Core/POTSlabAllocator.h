@@ -25,168 +25,139 @@
 
 namespace sngl::core
 {
+	class FixedSizeBlock
+	{
+	private:
+		struct Node { Node* next; };
+		Node* m_freeList;
+		size_t m_blockSize;
+		size_t m_pageSize;
+
+	public:
+		FixedSizeBlock();
+
+		void init(size_t blockSize);
+
+		void* pop();
+		void push(void* ptr);
+		void supplyNewMemory(void* ptr, size_t memSize);
+
+		inline size_t getSize() const { return m_blockSize; }
+	};
+
 	template <size_t reservationSize>
 	class POTSlabAllocator
 	{
 	private:
-		class FixedSizePool
+		static constexpr size_t getBlockSize(size_t arrIx)
 		{
-		private:
-			struct Node { Node* next; };
-			Node* m_freeList = nullptr;
-			size_t m_blockSize;
+			return (1ull << (arrIx + 4));
+		}
 
-		public:
-			void init(size_t blockSize)
-			{
-				assert(blockSize >= sizeof(Node) && "blockSize must be large enough to hold a pointer");
-				m_blockSize = blockSize;
-			}
+		static constexpr int getBlockIxFromSize(size_t blockSize)
+		{
+			int result = math::ceil_log2(blockSize) - 4;
+			if (result > MAX_BLOCK_COUNT)
+				return -1;
+			
+			return result;
+		}
 
-			void supplyNewPage(void* rawMemory, size_t pageSize)
-			{
-				size_t blocksInPage = pageSize / m_blockSize;
-				uint8_t* pageStart = static_cast<uint8_t*>(rawMemory);
+		static_assert(math::isPOT(reservationSize), "Reservation size must be a power of 2");
+		static constexpr size_t MIN_CELL_SIZE = 16ull;
+		static constexpr size_t MAX_BLOCK_COUNT = 16ull;
+		static constexpr size_t MAX_EFFECTIVE_ALLOCATION = getBlockSize(MAX_BLOCK_COUNT);
 
-				for (size_t i = 0; i < blocksInPage; i++)
-				{
-					uint8_t* currentBlockAddress = pageStart + (m_blockSize * i);
-					Node* node = reinterpret_cast<Node*>(currentBlockAddress);
-					node->next = m_freeList;
-					m_freeList = node;
-				}
-			}
+		FixedSizeBlock m_blocks[MAX_BLOCK_COUNT];
 
-			void* pop()
-			{
-				if (!m_freeList)
-					return nullptr;
-
-				Node* freeBlock = m_freeList;
-				m_freeList = freeBlock->next;
-
-				return freeBlock;
-			}
-
-			void push(void* ptr)
-			{
-				if (!ptr)
-					return;
-
-				Node* node = reinterpret_cast<Node*>(ptr);
-				node->next = m_freeList;
-				m_freeList = node;
-			}
-		};
+		bool m_initialized = false;
+		void* m_reservedMemory = nullptr;
+		size_t m_currentOffset = 0;
+		size_t m_pageSize = 0;
 
 		struct AllocHeader
 		{
+			static constexpr uint64_t MAGIC_VALUE = std::bit_cast<uint64_t>("POTSLAB");
+			uint64_t magicValue;
 			size_t allocationSize;
 		};
 
-	private:
-		static constexpr size_t MIN_POOL_SIZE = 16ull;
-		static constexpr int POOL_COUNT = math::log2(reservationSize / MIN_POOL_SIZE);
-
-		static_assert(reservationSize >= MIN_POOL_SIZE, "Reservation size must be greater or equal than 16");
-		static_assert(MIN_POOL_SIZE * (1 << POOL_COUNT) >= reservationSize);
-		
-		FixedSizePool m_pools[POOL_COUNT];
-
-		void* m_reservedPtr;
-		size_t m_reservedSize;
-		size_t m_commitedSize;
-		size_t m_pageSize;
-
 	public:
-		POTSlabAllocator()
-			: m_commitedSize(0)
+		void init()
 		{
-			assert(sngl::platform::IsInitialized() && "Allocators can only be used after platform initialization");
+			assert(!m_initialized); // You can't initialize an allocator twice
 			m_pageSize = sngl::platform::GetPageSize();
+			m_reservedMemory = sngl::platform::memory::Reserve(reservationSize);
+			if (!m_reservedMemory)
+				throw std::runtime_error("POTSlabAllocator: Failed to reserve memory for allocations");
 
-			m_reservedSize = (reservationSize + m_pageSize - 1) & ~(m_pageSize - 1);
-			m_reservedPtr = sngl::platform::memory::Reserve(reservationSize);
+			for (size_t i = 0; i < MAX_BLOCK_COUNT; i++)
+				m_blocks[i].init(getBlockSize(i));
 
-			size_t currentPoolSize = MIN_POOL_SIZE;
-			for (size_t i = 0; i < POOL_COUNT; i++)
-			{
-				m_pools[i].init(currentPoolSize);
-				currentPoolSize *= 2;
-			}
-		}
-
-		~POTSlabAllocator()
-		{
-			sngl::platform::memory::Release(m_reservedPtr);
+			m_initialized = true;
 		}
 
 		void* allocate(size_t size)
-		{
-			const size_t potSize = std::max(MIN_POOL_SIZE, std::bit_ceil<size_t>(size + sizeof(AllocHeader)));
-			const int poolIndex = getPoolIndexForSize(potSize);
+		{	
+			assert(m_initialized); // Using an uninitialized allocator
+			const size_t potSize = std::max(MIN_CELL_SIZE, std::bit_ceil(size + sizeof(AllocHeader)));
+			const int blockIx = getBlockIxFromSize(potSize);
+			void* memPtr = nullptr;
 
-			void* rawMemory = nullptr;
-			if (poolIndex >= 0)
+			if (blockIx >= 0)
 			{
-				rawMemory = m_pools[poolIndex].pop();
-				if (!rawMemory)
+				auto& block = m_blocks[blockIx];
+				memPtr = block.pop();
+
+				if (!memPtr)
 				{
-					m_pools[poolIndex].supplyNewPage(requestPage(), m_pageSize);
-					rawMemory = m_pools[poolIndex].pop();
+					uint8_t* currentMem = static_cast<uint8_t*>(m_reservedMemory) + m_currentOffset;
+
+					// TODO: handle blocks that are bigger than page size
+					// some math may be required for optimization
+					if (block.getSize() > m_pageSize)
+						throw std::runtime_error("Not Implemented");
+
+					if (!sngl::platform::memory::Commit(currentMem, m_pageSize))
+						throw std::runtime_error("POTSlabAllocator: Failed to commit new memory");
+
+					block.supplyNewMemory(currentMem, m_pageSize);
+					memPtr = block.pop();
+					m_currentOffset += m_pageSize;
 				}
 			}
 			else
 			{
-				// fallback
-				rawMemory = sngl::platform::memory::Reserve(potSize);
-				if (!rawMemory)
-					throw std::runtime_error("Failed to allocate memory");
+				// FALLBACK
+				// if we can't allocate in the pool
+				// we just allocate memory almost like malloc does
+				memPtr = sngl::platform::memory::Reserve(potSize);
+				if (!memPtr)
+					throw std::runtime_error("POTSlabAllocator: Failed to reserve fallback memory");
 
-				sngl::platform::memory::Commit(rawMemory, potSize);
+				if (!sngl::platform::memory::Commit(memPtr, potSize))
+					throw std::runtime_error("POTSlabAllocator: Failed to commit fallback memory");
 			}
 
-			assert(rawMemory);
-			AllocHeader* allocHeader = reinterpret_cast<AllocHeader*>(rawMemory);
-			allocHeader->allocationSize = potSize;
+			AllocHeader* header = static_cast<AllocHeader*>(memPtr);
+			header->magicValue = AllocHeader::MAGIC_VALUE;
+			header->allocationSize = potSize;
 
-			return reinterpret_cast<uint8_t*>(rawMemory) + sizeof(AllocHeader);
+			return reinterpret_cast<uint8_t*>(memPtr) + sizeof(AllocHeader);
 		}
 
 		void free(void* ptr)
 		{
-			const AllocHeader* header = reinterpret_cast<const AllocHeader*>(ptr);
-			const int poolIndex = getPoolIndexForSize(header->allocationSize);
+			AllocHeader* allocHeader = reinterpret_cast<AllocHeader*>(
+				static_cast<uint8_t*>(ptr) - sizeof(AllocHeader)
+			);
 
-			if (poolIndex >= 0)
-				m_pools[poolIndex].push(ptr);
+			assert(allocHeader->magicValue == AllocHeader::MAGIC_VALUE); // Wrong memory pointer used
+			const int blockIx = getBlockIxFromSize(allocHeader->allocationSize);
+			if (blockIx < 0)
+				sngl::platform::memory::Release(allocHeader);
 			else
-				sngl::platform::memory::Release(ptr);
-		}
-
-	private:
-		void* requestPage()
-		{
-			uint8_t* currentPtr = static_cast<uint8_t*>(m_reservedPtr) + m_commitedSize;
-			uint8_t* newPtr = currentPtr + m_pageSize;
-			if (!sngl::platform::memory::Commit(newPtr, m_pageSize))
-				throw std::runtime_error("POTSlabAllocator: Failed to commit memory.");
-
-			m_commitedSize += m_pageSize;
-			return newPtr;
-		}
-
-		int getPoolIndexForSize(size_t potSize) const
-		{
-			// log2(x) - 4 is array index
-			// POT gives us O(1) complexity making this allocator super fast
-			// since std::bit_width gives us log2(x) + 1, we need to subtract additional 1
-			// https://en.cppreference.com/w/cpp/numeric/bit_width.html
-			const int poolIndex = std::bit_width<size_t>(potSize) - 5;
-			if (poolIndex > POOL_COUNT - 1)
-				return -1;
-
-			return poolIndex;
+				m_blocks->push(allocHeader);
 		}
 	};
 }
