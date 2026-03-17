@@ -41,7 +41,8 @@ cmake --build --preset build-vulkan-release .
 # 🗺 Current Status & Roadmap
 - [x] Custom memory allocators
 - [ ] Linux abstractions
-- [ ] 3D Rendering
+- [ ] Vulkan driven 3D Rendering
+- [ ] D3D12 driven 3D Rendering
 - [ ] Actually working engine
 - [ ] Editor interface (long term goal)
 - [ ] MacOS support (long term goal)
