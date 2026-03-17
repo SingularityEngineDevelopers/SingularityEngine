@@ -39,7 +39,7 @@ cmake --build --preset build-vulkan-release .
 ```
 
 # 🗺 Current Status & Roadmap
-- [ ] Custom memory allocators (in progress)
+- [x] Custom memory allocators
 - [ ] Linux abstractions
 - [ ] 3D Rendering
 - [ ] Actually working engine
