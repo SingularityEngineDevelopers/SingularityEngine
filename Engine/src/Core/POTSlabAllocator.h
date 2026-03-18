@@ -56,7 +56,7 @@ namespace sngl::core
 
 		static constexpr int getBlockIxFromSize(size_t blockSize)
 		{
-			int result = math::ceil_log2(blockSize) - 5;
+			int result = math::ceil_log2(blockSize) - 4;
 			if (result > MAX_BLOCK_COUNT)
 				return -1;
 			
@@ -66,7 +66,7 @@ namespace sngl::core
 		static_assert(math::isPOT(reservationSize), "Reservation size must be a power of 2");
 		static constexpr size_t MIN_CELL_SIZE = 16ull;
 		static constexpr size_t MAX_BLOCK_COUNT = 16ull;
-		static constexpr size_t MAX_EFFECTIVE_ALLOCATION = getBlockSize(MAX_BLOCK_COUNT - 1);
+		static constexpr size_t MAX_EFFECTIVE_ALLOCATION = getBlockSize(MAX_BLOCK_COUNT);
 
 		FixedSizeBlock m_blocks[MAX_BLOCK_COUNT];
 

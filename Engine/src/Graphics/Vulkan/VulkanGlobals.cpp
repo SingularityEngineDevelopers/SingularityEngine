@@ -40,7 +40,7 @@ static void* vulkanReallocate(
 
 static void vulkanFree(void* pUserData, void* pMemory);
 
-static const VkAllocationCallbacks g_allocCbs
+static VkAllocationCallbacks g_allocCbs
 {
 	.pUserData = nullptr,
 	.pfnAllocation = vulkanAllocate,
@@ -164,7 +164,7 @@ void sngl::graphics::vulkan::initAllocators()
 	g_allocatorsInitialized = true;
 }
 
-const VkAllocationCallbacks* sngl::graphics::vulkan::getAllocCallbacks()
+VkAllocationCallbacks* sngl::graphics::vulkan::getAllocCallbacks()
 {
 	return &g_allocCbs;
 }

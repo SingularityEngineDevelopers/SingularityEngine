@@ -20,6 +20,7 @@ namespace sngl::graphics
 	class VulkanInstance
 	{
 	private:
+		VkAllocationCallbacks* m_allocCallbacks;
 		VkInstance m_instance;
 		VkDebugUtilsMessengerEXT m_debugMessenger;
 

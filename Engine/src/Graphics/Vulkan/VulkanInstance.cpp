@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "VulkanInstance.h"
+#include "VulkanGlobals.h"
 
 #include <iostream>
 #include <vector>
@@ -30,6 +31,7 @@ VulkanInstance::~VulkanInstance()
 
 void VulkanInstance::init()
 {
+	m_allocCallbacks = vulkan::getAllocCallbacks();
 	volkInitialize();
 
 	std::vector<const char*> instanceExtensions;
@@ -75,13 +77,13 @@ void VulkanInstance::init()
 		.ppEnabledExtensionNames = instanceExtensions.data()
 	};
 
-	if (vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance) != VK_SUCCESS)
+	if (vkCreateInstance(&instanceCreateInfo, m_allocCallbacks, &m_instance) != VK_SUCCESS)
 		throw std::runtime_error("Failed to create Vulkan instance");
 
 	volkLoadInstance(m_instance);
 
 #ifdef SNGL_DEBUG
-	if (vkCreateDebugUtilsMessengerEXT(m_instance, &m_debugMessengerCreateInfo, nullptr, &m_debugMessenger) != VK_SUCCESS)
+	if (vkCreateDebugUtilsMessengerEXT(m_instance, &m_debugMessengerCreateInfo, m_allocCallbacks, &m_debugMessenger) != VK_SUCCESS)
 		throw std::runtime_error("Failed to create a debug utils messenger");
 #endif
 }

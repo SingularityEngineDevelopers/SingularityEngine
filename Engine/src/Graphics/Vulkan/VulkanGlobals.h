@@ -7,7 +7,7 @@
 namespace sngl::graphics::vulkan
 {
 	void initAllocators();
-	const VkAllocationCallbacks* getAllocCallbacks();
+	VkAllocationCallbacks* getAllocCallbacks();
 }
 
 #endif
