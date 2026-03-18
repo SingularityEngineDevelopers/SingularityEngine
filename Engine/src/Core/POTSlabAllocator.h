@@ -102,10 +102,11 @@ namespace sngl::core
 			m_initialized = true;
 		}
 
-		void* allocate(size_t size)
+		void* allocate(size_t size, size_t alignment = 0)
 		{	
 			assert(m_initialized); // Using an uninitialized allocator
-			const size_t potSize = std::max(MIN_CELL_SIZE, std::bit_ceil(size + sizeof(AllocHeader)));
+			const size_t worstCaseSize = size + sizeof(AllocHeader) + alignment;
+			const size_t potSize = std::max(MIN_CELL_SIZE, std::bit_ceil(worstCaseSize));
 			const int blockIx = getBlockIxFromSize(potSize);
 			void* memPtr = nullptr;
 

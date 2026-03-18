@@ -16,26 +16,38 @@
 #include <Platform/OS.h>
 
 #include <stdexcept>
+#include <cassert>
 
 using namespace sngl::core;
 
-LinearArenaAllocator::LinearArenaAllocator(size_t reserveSize)
-	: m_currentOffset(0), m_commitedSize(0)
+LinearArenaAllocator::LinearArenaAllocator()
+	: m_initialized(false),
+	m_baseAddress(nullptr), 
+	m_reservedSize(0),
+	m_commitedSize(0),
+	m_currentOffset(0)
+{ }
+
+LinearArenaAllocator::~LinearArenaAllocator()
 {
-	m_reservedSize = alignUp(reserveSize, sngl::platform::GetPageSize());
+	if (m_initialized)
+		sngl::platform::memory::Release(m_baseAddress);
+}
+
+void LinearArenaAllocator::init(size_t reservationSize)
+{
+	m_reservedSize = alignUp(reservationSize, sngl::platform::GetPageSize());
 
 	m_baseAddress = (uint8_t*)sngl::platform::memory::Reserve(m_reservedSize);
 	if (!m_baseAddress)
 		throw std::runtime_error("Failed to reserve memory");
-}
 
-LinearArenaAllocator::~LinearArenaAllocator()
-{
-
+	m_initialized = true;
 }
 
 void* LinearArenaAllocator::allocate(size_t size, size_t alignment)
 {
+	assert(m_initialized); // trying to use uninitialized allocator
 	const size_t alignedOffset = alignUp(m_currentOffset, alignment);
 	const size_t newOffset = alignedOffset + size;
 
@@ -61,6 +73,7 @@ void* LinearArenaAllocator::allocate(size_t size, size_t alignment)
 
 void LinearArenaAllocator::reset()
 {
+	assert(m_initialized); // trying to reset uninitialized allocator
 	m_currentOffset = 0;
 }
 

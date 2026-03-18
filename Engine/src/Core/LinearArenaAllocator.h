@@ -22,13 +22,14 @@ namespace sngl::core
 	class LinearArenaAllocator
 	{
 	private:
+		bool m_initialized;
 		uint8_t* m_baseAddress;
 		size_t m_reservedSize;
 		size_t m_commitedSize;
 		size_t m_currentOffset;
 
 	public:
-		LinearArenaAllocator(size_t reserveSize);
+		LinearArenaAllocator();
 		~LinearArenaAllocator();
 
 		template <typename T>
@@ -36,6 +37,8 @@ namespace sngl::core
 		{
 			return reinterpret_cast<T*>(allocate(sizeof(T) * count, alignof(T)));
 		}
+
+		void init(size_t reservationSize);
 
 		void* allocate(size_t size, size_t alignment = 8);
 		void reset();
