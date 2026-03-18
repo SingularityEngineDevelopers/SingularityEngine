@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <sngl/Core/Engine.h>
-#include <sngl/Graphics/Device.h>
+#include <sngl/Graphics/Renderer.h>
 #include <Platform/OS.h>
 
 #include <stdexcept>

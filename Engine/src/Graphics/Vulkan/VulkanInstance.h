@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sngl/Graphics/Instance.h>
-
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 
 namespace sngl::graphics
 {
-	class VulkanInstance : public Instance
+	class VulkanInstance
 	{
 	private:
 		VkInstance m_instance;
@@ -27,9 +25,9 @@ namespace sngl::graphics
 
 	public:
 		VulkanInstance();
-		~VulkanInstance() override;
+		~VulkanInstance();
 
-		void init() override;
+		void init();
 
 	private:
 		static VkBool32 debugMessengerCallback(

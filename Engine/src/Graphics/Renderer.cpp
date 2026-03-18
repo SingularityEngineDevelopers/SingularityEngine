@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef __SNGL_GRAPHICS_DEVICE_H_INCLUDED__
-#define __SNGL_GRAPHICS_DEVICE_H_INCLUDED__
+#include <sngl/Graphics/Renderer.h>
+#include "Vulkan/VulkanRenderer.h"
 
-#include <memory>
-#include "Types.h"
+#include <stdexcept>
 
-namespace sngl::graphics
+using namespace sngl::graphics;
+
+Renderer::RendererPtr_t Renderer::Create(RenderApi api)
 {
-	class Device
+	switch (api)
 	{
-	public:
-		using deviceptr_t = std::unique_ptr<Device>;
-
-		virtual ~Device() = default;
-		virtual void init() = 0;
-	};
+	case RenderApi::Vulkan:
+		return std::make_unique<VulkanRenderer>();
+	case RenderApi::DX12:
+		// throw std::runtime_error("Not Implemented");
+	default:
+		return nullptr;
+	}
 }
-
-#endif

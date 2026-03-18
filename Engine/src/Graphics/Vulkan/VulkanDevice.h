@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sngl/Graphics/Device.h>
-
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 
 namespace sngl::graphics
 {
-	class VulkanDevice : public Device
+	class VulkanDevice
 	{
 	private:
 		VkInstance m_instance;
@@ -27,8 +25,8 @@ namespace sngl::graphics
 
 	public:
 		VulkanDevice();
-		~VulkanDevice() override;
+		~VulkanDevice();
 
-		void init() override;
+		void init();
 	};
 }

@@ -30,16 +30,17 @@ set(SNGL_CORE_SOURCES
 )
 
 set(SNGL_GRAPHICS_SOURCES 
+	"include/sngl/Graphics/Renderer.h"
 	"include/sngl/Graphics/Types.h"
-	"include/sngl/Graphics/Instance.h"
-	"include/sngl/Graphics/Device.h"
-	"src/Graphics/Instance.cpp"
+	"src/Graphics/Renderer.cpp"
 	"src/Graphics/Vulkan/VulkanInstance.h"
 	"src/Graphics/Vulkan/VulkanInstance.cpp"
 	"src/Graphics/Vulkan/VulkanDevice.h"
 	"src/Graphics/Vulkan/VulkanDevice.cpp"
 	"src/Graphics/Vulkan/VulkanGlobals.h"
 	"src/Graphics/Vulkan/VulkanGlobals.cpp"
+	"src/Graphics/Vulkan/VulkanRenderer.h"
+	"src/Graphics/Vulkan/VulkanRenderer.cpp"
 )
 
 add_library(SingularityEngine STATIC ${SNGL_PLATFORM_SOURCES} ${SNGL_CORE_SOURCES} ${SNGL_GRAPHICS_SOURCES})

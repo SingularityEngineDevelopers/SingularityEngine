@@ -7,7 +7,10 @@
 
 using namespace sngl::graphics;
 
-using SlabAllocator_t = sngl::core::POTSlabAllocator<512 * 1024 * 1024>;
+static constexpr size_t LINEAR_PREALLOC_SIZE = 16 * 1024 * 1024;
+static constexpr size_t SLAB_PREALLOC_SIZE = 512 * 1024 * 1024;
+
+using SlabAllocator_t = sngl::core::POTSlabAllocator<SLAB_PREALLOC_SIZE>;
 using ArenaAllocator_t = sngl::core::LinearArenaAllocator;
 
 enum class AllocatorType { AT_SLAB, AT_LINEAR };
@@ -47,10 +50,9 @@ static const VkAllocationCallbacks g_allocCbs
 	.pfnInternalFree = nullptr
 };
 
-static constexpr size_t LINEAR_PREALLOC_SIZE = 16 * 1024 * 1024;
 static bool g_allocatorsInitialized = false;
 static SlabAllocator_t g_slabAllocator;
-static ArenaAllocator_t g_linearAllocator(LINEAR_PREALLOC_SIZE);
+static ArenaAllocator_t g_linearAllocator;
 
 static inline void checkHeader(const VulkanAllocHeader* pHeader)
 {
@@ -158,6 +160,7 @@ void sngl::graphics::vulkan::initAllocators()
 {
 	assert(!g_allocatorsInitialized); // allocators were intialized already
 	g_slabAllocator.init();
+	g_linearAllocator.init(LINEAR_PREALLOC_SIZE);
 	g_allocatorsInitialized = true;
 }
 

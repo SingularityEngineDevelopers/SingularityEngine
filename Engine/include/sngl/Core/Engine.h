@@ -16,16 +16,20 @@
 #define __SNGL_CORE_ENGINE_H_INCLUDED__
 
 #include <sngl/Platform/SDLWindow.h>
-#include <sngl/Graphics/Instance.h>
 #include <memory>
 
 namespace sngl
 {
+	namespace graphics
+	{
+		class Renderer;
+	}
+
 	class Engine
 	{
 	public:
 		using window_t = sngl::platform::SDLWindow;
-		using renderer_t = sngl::graphics::Instance;
+		using renderer_t = sngl::graphics::Renderer;
 
 	private:
 		std::unique_ptr<window_t> m_window;
