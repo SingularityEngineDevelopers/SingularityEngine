@@ -47,10 +47,19 @@ FetchContent_Declare(
 	GIT_TAG 29184b98984f6169a5e83e97557a77cff1e5b0ca
 )
 
+FetchContent_Declare(
+	GoogleTest
+	GIT_REPOSITORY https://github.com/google/googletest.git
+	GIT_TAG 52eb8108c5bdec04579160ae17225d66034bd723
+)
+
 set(SDL_TESTS OFF CACHE BOOL "" FORCE)
 set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(SDL3 volk Vulkan_Headers)
+FetchContent_MakeAvailable(SDL3 volk Vulkan_Headers GoogleTest)
+
+get_filename_component(SNGL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE CACHE)
 
 add_subdirectory(Engine)
 add_subdirectory(Sandbox)
+add_subdirectory(Tests)
